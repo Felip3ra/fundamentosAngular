@@ -14,7 +14,8 @@ interface IInfos{
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss'],
   //encapsulation: ViewEncapsulation.None
-  encapsulation: ViewEncapsulation.Emulated
+  //encapsulation: ViewEncapsulation.Emulated
+  encapsulation: ViewEncapsulation.ShadowDom
 })
 
 //encapsulation: ViewEncapsulation.None
@@ -22,6 +23,9 @@ interface IInfos{
 
 //encapsulation: ViewEncapsulation.Emulated
 //os estilos não ficam globais, porém estilos globais afetam os componentes
+
+//encapsulation: ViewEncapsulation.ShadowDom
+//os estilos não ficam globais e os estilos globais não afetam o componente pai, somente os filhos
 
 export class CardComponent {
  
