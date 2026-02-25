@@ -22,3 +22,21 @@
 
 
 }
+
+//Aplica uma modificação no componente filho a partir do componente pai
+//Porem afeta de forma global
+//ideal é que o componente filho tenha ids diferentes.
+// ::ng-deep .card-cancel-button{
+//     background-color: yellow !important;
+// }
+
+// ::ng-deep #cancel-button .card-cancel-button{
+//     background-color: yellow !important;
+// }
+
+//O :host refere-se ao próprio componente onde o CSS está escrito.
+//Aplique este estilo apenas aos elementos .card-cancel-button que estiverem dentro deste componente específico
+//estilo local
+:host ::ng-deep .card-cancel-button{
+    background-color: yellow !important;
+}
