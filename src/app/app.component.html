@@ -1,6 +1,24 @@
-
-<div class="cards-container">
+<!-- <div class="cards-container">
     <app-card></app-card>
     <card-roxo></card-roxo>
     
-</div>
+</div> -->
+<!--  
+A vinculação de propriedades no Angular permite definir valores para propriedades de elementos HTML, componentes Angular e muito mais.
+
+Use a vinculação de propriedades para definir valores dinamicamente para propriedades e atributos. Você pode, por exemplo, ativar/desativar recursos de botões, definir caminhos de imagens programaticamente e compartilhar valores entre componentes.
+
+-->
+<input
+  id="meu-input"
+  [value]="inputText"
+  [type]="inputType"
+  [disabled]="isDisabled"
+  (keyup)="handleInputKeyup($event)"
+  (input)="handleInputEvent($event)"
+/>
+
+<br />
+
+<button (click)="enableInput()">Habilitar</button>
+<button (click)="disableInput()">desabilitar</button>
