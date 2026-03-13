@@ -291,6 +291,173 @@ Resumo:
 - use `[attr.x]` para atributos HTML
 - `attribute binding` é muito comum em tabelas e acessibilidade
 
+## 5.2 CSS Style Binding
+
+O Angular permite aplicar estilos CSS dinamicamente direto no template.
+
+Diferença principal:
+
+- `property binding` altera propriedades do elemento
+- `attribute binding` altera atributos HTML
+- `style binding` altera estilos CSS inline
+
+Quando usar:
+
+- quando a cor, largura, altura ou display dependem do estado do componente
+- quando você quer mudar o visual sem precisar criar várias classes CSS
+
+### Sintaxe
+
+```html
+[style.nome-do-estilo]="valor"
+```
+
+Também é possível informar unidade:
+
+```html
+[style.width.px]="largura"
+```
+
+### Exemplo simples
+
+```ts
+export class BotaoComponent {
+  corFundo = 'green';
+}
+```
+
+```html
+<button [style.background-color]="corFundo">
+  Confirmar
+</button>
+```
+
+### Exemplo com unidade
+
+```ts
+export class CaixaComponent {
+  largura = 300;
+}
+```
+
+```html
+<div [style.width.px]="largura">
+  Conteúdo da caixa
+</div>
+```
+
+### Exemplo com condição
+
+```ts
+export class StatusComponent {
+  ativo = true;
+}
+```
+
+```html
+<p [style.color]="ativo ? 'green' : 'red'">
+  Status do plano
+</p>
+```
+
+Resumo:
+
+- use `[style.propriedade]` para estilos dinâmicos
+- use `[style.propriedade.unidade]` quando precisar de `px`, `%` e similares
+- `style binding` é útil para mudanças visuais rápidas controladas pelo componente
+
+## 5.3 CSS Class Binding
+
+O Angular também permite adicionar ou remover classes CSS dinamicamente.
+
+Diferença principal:
+
+- `style binding` altera um estilo específico inline
+- `class binding` ativa ou desativa classes CSS inteiras
+
+Quando usar:
+
+- quando o visual depende de um estado como ativo, erro, destaque ou desabilitado
+- quando você quer reaproveitar regras CSS já definidas no arquivo `.scss`
+
+### Sintaxe
+
+```html
+[class.nome-da-classe]="condicao"
+```
+
+Também é possível trocar várias classes com `ngClass`:
+
+```html
+[ngClass]="{ ativo: true, erro: false }"
+```
+
+### Exemplo simples
+
+```ts
+export class CardComponent {
+  destaque = true;
+}
+```
+
+```html
+<div [class.destaque]="destaque">
+  Plano em destaque
+</div>
+```
+
+```scss
+.destaque {
+  border: 2px solid orange;
+  background-color: #fff3cd;
+}
+```
+
+### Exemplo com condição
+
+```ts
+export class StatusComponent {
+  ativo = false;
+}
+```
+
+```html
+<p [class.ativo]="ativo" [class.inativo]="!ativo">
+  Status do usuário
+</p>
+```
+
+```scss
+.ativo {
+  color: green;
+}
+
+.inativo {
+  color: red;
+}
+```
+
+### Exemplo com `ngClass`
+
+```ts
+export class AlertaComponent {
+  sucesso = true;
+  erro = false;
+}
+```
+
+```html
+<div [ngClass]="{ sucesso: sucesso, erro: erro }">
+  Mensagem do sistema
+</div>
+```
+
+Resumo:
+
+- use `[class.nome]` para ativar uma classe com base em condição
+- use `ngClass` quando precisar lidar com várias classes
+- `class binding` é melhor do que `style binding` quando o estilo já existe no CSS
+
 ## 6. Event Binding
 
 No mesmo exemplo do `AppComponent`, foram usados eventos:
@@ -796,6 +963,34 @@ export class ExemploComponent {
 </button>
 ```
 
+### Exemplo de CSS style binding
+
+```ts
+export class ExemploComponent {
+  corTexto = 'purple';
+}
+```
+
+```html
+<p [style.color]="corTexto">
+  Texto com cor dinâmica
+</p>
+```
+
+### Exemplo de CSS class binding
+
+```ts
+export class ExemploComponent {
+  destaque = true;
+}
+```
+
+```html
+<p [class.destaque]="destaque">
+  Texto com classe dinâmica
+</p>
+```
+
 ### Exemplo de renderização com condição simples
 
 ```ts
@@ -861,19 +1056,29 @@ export class ResumoComponent {
   };
 
   ativo = true;
+  descricao = 'Botão de cancelamento';
+  corStatus = 'green';
+  destaque = true;
 
   desativarPlano() {
     this.ativo = false;
+    this.corStatus = 'red';
+    this.destaque = false;
   }
 }
 ```
 
 ```html
-<div class="card">
+<div class="card" [class.destaque]="destaque">
   <h2>{{ plano.nome }}</h2>
   <p>R$ {{ plano.preco }}</p>
+  <span [style.color]="corStatus">Status visual</span>
 
-  <button [disabled]="!ativo" (click)="desativarPlano()">
+  <button
+    [disabled]="!ativo"
+    [attr.aria-label]="descricao"
+    (click)="desativarPlano()"
+  >
     Cancelar
   </button>
 </div>
@@ -885,6 +1090,8 @@ Nesse exemplo aparecem:
 - interpolação
 - property binding
 - attribute binding
+- style binding
+- class binding
 - event binding
 - organização entre classe e template
 
@@ -894,6 +1101,8 @@ Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 
 - `[]` envia valor da classe para o template
 - `[attr.x]` envia valor para um atributo HTML
+- `[style.x]` envia valor para um estilo CSS inline
+- `[class.x]` ativa ou remove uma classe CSS
 - `()` escuta evento do template
 - `{{ }}` exibe valor no HTML
 - `declarations` registra componentes do módulo
@@ -916,15 +1125,20 @@ export class RevisaoComponent {
   nome = 'Angular';
   bloqueado = false;
   descricao = 'Botão principal';
+  cor = 'blue';
+  destaque = true;
 
   bloquear() {
     this.bloqueado = true;
+    this.cor = 'gray';
+    this.destaque = false;
   }
 }
 ```
 
 ```html
-<h1>{{ nome }}</h1>
+<h1 [class.destaque]="destaque">{{ nome }}</h1>
+<p [style.color]="cor">Estado visual</p>
 <button
   [disabled]="bloqueado"
   [attr.aria-label]="descricao"
@@ -939,6 +1153,8 @@ Revisão do que aparece aqui:
 - `{{ nome }}`: interpolação
 - `[disabled]`: property binding
 - `[attr.aria-label]`: attribute binding
+- `[style.color]`: CSS style binding
+- `[class.destaque]`: CSS class binding
 - `(click)`: event binding
 
 ## 20. Próximos assuntos para continuar estudando

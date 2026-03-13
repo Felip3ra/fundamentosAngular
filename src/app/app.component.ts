@@ -25,11 +25,31 @@ export class AppComponent {
   //   console.log(((event.target) as HTMLInputElement).value);
   // }
 
-  buttonTittle = 'Titulo do botão';
-  buttonDisabled = false;
+  // buttonTittle = 'Titulo do botão';
+  // buttonDisabled = false;
 
-  onButtonClick(){
-    this.buttonTittle = 'Alterado';
-    this.buttonDisabled = !this.buttonDisabled;
-  }
+  // onButtonClick(){
+  //   this.buttonTittle = 'Alterado';
+  //   this.buttonDisabled = !this.buttonDisabled;
+  // }
+  // widthButton1 = '110px';
+  // widthButton2 = '130';
+  // stylesObj = {
+  //   width: '160px',
+  //   backgroundColor: 'grey'
+  // }
+
+  // updateStyleObj(){
+  //   this.stylesObj = {
+  //    width: '170px', 
+  //    backgroundColor: 'lightblue'
+  //   }
+  // }
+  // updateWidth(){
+  //   this.widthButton2 = '200';
+  // }
+
+  isRedButton = true;
+
+  isGreen = true;
 }
