@@ -1,8 +1,8 @@
-<!-- <div class="cards-container">
-    <app-card></app-card>
+<div class="cards-container">
+    <app-card [planTypeAlias]="cardPlanType" [planPrice]="cardPlanValue"></app-card>
     <card-roxo></card-roxo>
     
-</div> -->
+</div>
 <!--  
 A vinculação de propriedades no Angular permite definir valores para propriedades de elementos HTML, componentes Angular e muito mais.
 
@@ -45,7 +45,7 @@ Use a vinculação de propriedades para definir valores dinamicamente para propr
 
 <button (click)="updateWidth()">Atualizar width</button> -->
 
-<button [class.red-button]="isRedButton" (click)="isGreen = false;">Vermelho</button>
+<!-- <button [class.red-button]="isRedButton" (click)="isGreen = false;">Vermelho</button>
 
 <button [class.green-button]="true" (click)="isGreen = true;">verde</button>
 
@@ -54,4 +54,4 @@ Use a vinculação de propriedades para definir valores dinamicamente para propr
   'red-button': !isGreen,
   'green-button': isGreen
 }
-">objeto</button>
+">objeto</button> -->

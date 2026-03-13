@@ -49,7 +49,9 @@ export class AppComponent {
   //   this.widthButton2 = '200';
   // }
 
-  isRedButton = true;
+  // isRedButton = true;
 
-  isGreen = true;
+  // isGreen = true;
+  cardPlanType = 'Simples';
+  cardPlanValue = 100;
 }

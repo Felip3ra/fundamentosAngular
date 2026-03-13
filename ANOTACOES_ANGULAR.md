@@ -929,6 +929,103 @@ Uso no HTML:
 <app-perfil></app-perfil>
 ```
 
+## 18. Decorator `@Input()`
+
+O decorator `@Input()` permite que um componente pai envie dados para um componente filho.
+
+Em outras palavras:
+
+- o componente pai passa um valor
+- o componente filho recebe esse valor por uma propriedade decorada com `@Input()`
+
+Quando usar:
+
+- para reaproveitar componentes com conteúdos diferentes
+- para deixar o componente filho configurável
+- para comunicação de pai para filho
+
+### Sintaxe básica
+
+```ts
+@Input() nomeDaPropriedade = valorInicial;
+```
+
+### Exemplo do componente filho
+
+```ts
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-produto',
+  template: `<p>{{ nome }}</p>`
+})
+export class ProdutoComponent {
+  @Input() nome = '';
+}
+```
+
+### Exemplo do componente pai
+
+```html
+<app-produto [nome]="'Notebook'"></app-produto>
+```
+
+Nesse caso:
+
+- o pai envia `'Notebook'`
+- o filho recebe esse valor na propriedade `nome`
+
+### Exemplo com mais de um valor
+
+```ts
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-card-plano',
+  template: `
+    <h2>{{ titulo }}</h2>
+    <p>R$ {{ preco }}</p>
+  `
+})
+export class CardPlanoComponent {
+  @Input() titulo = '';
+  @Input() preco = 0;
+}
+```
+
+```html
+<app-card-plano
+  [titulo]="'Plano Premium'"
+  [preco]="150"
+></app-card-plano>
+```
+
+### Exemplo com alias
+
+Também é possível renomear a entrada no HTML:
+
+```ts
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-avatar',
+  template: `<img [src]="url" />`
+})
+export class AvatarComponent {
+  @Input('imagem') url = '';
+}
+```
+
+```html
+<app-avatar [imagem]="'/assets/user.png'"></app-avatar>
+```
+
+Resumo:
+
+- `@Input()` recebe dados do componente pai
+- a comunicação acontece de pai para filho
+- normalmente o valor chega ao filho por property binding
+
 ## 18.1 Exemplos rápidos para treinar
 
 ### Exemplo de property binding + event binding
@@ -1019,7 +1116,7 @@ export class ProdutoComponent {
 <span>R$ {{ produto.preco }}</span>
 ```
 
-## 18. O que este projeto praticou
+## 19. O que este projeto praticou
 
 Com base no código e nos comentários, este projeto abordou:
 
@@ -1038,6 +1135,7 @@ Com base no código e nos comentários, este projeto abordou:
 - SCSS com variáveis
 - integração com Angular Material
 - composição de componentes
+- `@Input()`
 
 ### Exemplo integrando vários conceitos
 
@@ -1095,7 +1193,7 @@ Nesse exemplo aparecem:
 - event binding
 - organização entre classe e template
 
-## 19. Resumo rápido para revisão
+## 20. Resumo rápido para revisão
 
 Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 
@@ -1105,6 +1203,7 @@ Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 - `[class.x]` ativa ou remove uma classe CSS
 - `()` escuta evento do template
 - `{{ }}` exibe valor no HTML
+- `@Input()` recebe valor do componente pai
 - `declarations` registra componentes do módulo
 - `imports` traz módulos necessários
 - `exports` libera componentes para outros módulos
@@ -1157,11 +1256,11 @@ Revisão do que aparece aqui:
 - `[class.destaque]`: CSS class binding
 - `(click)`: event binding
 
-## 20. Próximos assuntos para continuar estudando
+## 21. Próximos assuntos para continuar estudando
 
 Depois do que foi visto aqui, a sequência mais natural de estudo seria:
 
-1. `@Input()` e `@Output()`
+1. `@Output()`
 2. `*ngIf`, `*ngFor` e diretivas estruturais
 3. two-way binding com `[(ngModel)]`
 4. serviços e injeção de dependência
