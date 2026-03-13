@@ -225,6 +225,72 @@ export class AppComponent {
 />
 ```
 
+## 5.1 Attribute Binding
+
+Além de `property binding`, o Angular também permite fazer binding de atributos HTML.
+
+Diferença principal:
+
+- `property binding` altera a propriedade do elemento no DOM
+- `attribute binding` altera o atributo HTML usando o prefixo `attr.`
+
+Quando usar:
+
+- quando o Angular não consegue associar diretamente a uma propriedade nativa
+- quando você precisa definir atributos como `colspan`, `aria-label`, `aria-describedby`, `role` ou `data-*`
+
+### Sintaxe
+
+```html
+[attr.nome-do-atributo]="valor"
+```
+
+### Exemplo simples
+
+```ts
+export class TabelaComponent {
+  totalColunas = 2;
+}
+```
+
+```html
+<td [attr.colspan]="totalColunas">Conteúdo expandido</td>
+```
+
+### Exemplo com acessibilidade
+
+```ts
+export class BotaoComponent {
+  descricao = 'Fechar modal';
+}
+```
+
+```html
+<button [attr.aria-label]="descricao">
+  X
+</button>
+```
+
+### Exemplo com `data-*`
+
+```ts
+export class CardComponent {
+  categoria = 'premium';
+}
+```
+
+```html
+<div [attr.data-category]="categoria">
+  Plano Premium
+</div>
+```
+
+Resumo:
+
+- use `[]` para propriedades
+- use `[attr.x]` para atributos HTML
+- `attribute binding` é muito comum em tabelas e acessibilidade
+
 ## 6. Event Binding
 
 No mesmo exemplo do `AppComponent`, foram usados eventos:
@@ -716,6 +782,20 @@ export class ExemploComponent {
 </button>
 ```
 
+### Exemplo de attribute binding
+
+```ts
+export class ExemploComponent {
+  descricao = 'Botão de salvar';
+}
+```
+
+```html
+<button [attr.aria-label]="descricao">
+  Salvar
+</button>
+```
+
 ### Exemplo de renderização com condição simples
 
 ```ts
@@ -804,6 +884,7 @@ Nesse exemplo aparecem:
 - componente
 - interpolação
 - property binding
+- attribute binding
 - event binding
 - organização entre classe e template
 
@@ -812,6 +893,7 @@ Nesse exemplo aparecem:
 Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 
 - `[]` envia valor da classe para o template
+- `[attr.x]` envia valor para um atributo HTML
 - `()` escuta evento do template
 - `{{ }}` exibe valor no HTML
 - `declarations` registra componentes do módulo
@@ -833,6 +915,7 @@ Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 export class RevisaoComponent {
   nome = 'Angular';
   bloqueado = false;
+  descricao = 'Botão principal';
 
   bloquear() {
     this.bloqueado = true;
@@ -842,7 +925,11 @@ export class RevisaoComponent {
 
 ```html
 <h1>{{ nome }}</h1>
-<button [disabled]="bloqueado" (click)="bloquear()">
+<button
+  [disabled]="bloqueado"
+  [attr.aria-label]="descricao"
+  (click)="bloquear()"
+>
   Bloquear
 </button>
 ```
@@ -851,6 +938,7 @@ Revisão do que aparece aqui:
 
 - `{{ nome }}`: interpolação
 - `[disabled]`: property binding
+- `[attr.aria-label]`: attribute binding
 - `(click)`: event binding
 
 ## 20. Próximos assuntos para continuar estudando

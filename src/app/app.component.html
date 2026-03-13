@@ -9,7 +9,7 @@ A vinculação de propriedades no Angular permite definir valores para proprieda
 Use a vinculação de propriedades para definir valores dinamicamente para propriedades e atributos. Você pode, por exemplo, ativar/desativar recursos de botões, definir caminhos de imagens programaticamente e compartilhar valores entre componentes.
 
 -->
-<input
+<!-- <input
   id="meu-input"
   [value]="inputText"
   [type]="inputType"
@@ -21,4 +21,10 @@ Use a vinculação de propriedades para definir valores dinamicamente para propr
 <br />
 
 <button (click)="enableInput()">Habilitar</button>
-<button (click)="disableInput()">desabilitar</button>
+<button (click)="disableInput()">desabilitar</button> -->
+
+<button [attr.title]="buttonTittle">Teste</button>
+
+<button [attr.disabled]="buttonDisabled ? true: null">Disabled</button>
+
+<button (click)="onButtonClick()">Mudar props</button>
