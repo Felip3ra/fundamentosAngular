@@ -37,5 +37,9 @@ export class CardComponent {
   //   },
   // };
   @Input('planTypeAlias') planType : string = ''
-  @Input({required: true, alias: ''}) planPrice : number = 0
+  @Input({required: true}) planPrice : number = 0
+
+  buttonClicked(event: boolean){
+    console.log(event)
+  }
 }
