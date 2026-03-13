@@ -1116,6 +1116,131 @@ export class ProdutoComponent {
 <span>R$ {{ produto.preco }}</span>
 ```
 
+## 18.2 Decorator `@Output()`
+
+O decorator `@Output()` permite que um componente filho envie eventos para um componente pai.
+
+Em outras palavras:
+
+- o filho dispara um evento
+- o pai escuta esse evento no template
+
+Quando usar:
+
+- para avisar o pai que algo aconteceu no filho
+- para comunicar clique, cancelamento, selecao ou atualizacao
+- para comunicacao de filho para pai
+
+### Sintaxe basica
+
+```ts
+@Output() nomeDoEvento = new EventEmitter<TipoDoValor>();
+```
+
+### Exemplo do componente filho
+
+```ts
+import { Component, EventEmitter, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-botao-cancelar',
+  template: `<button (click)="cancelar()">Cancelar</button>`
+})
+export class BotaoCancelarComponent {
+  @Output() acaoCancelada = new EventEmitter<void>();
+
+  cancelar() {
+    this.acaoCancelada.emit();
+  }
+}
+```
+
+### Exemplo do componente pai
+
+```html
+<app-botao-cancelar (acaoCancelada)="onCancelar()"></app-botao-cancelar>
+```
+
+```ts
+export class AppComponent {
+  onCancelar() {
+    console.log('Acao de cancelamento recebida do filho');
+  }
+}
+```
+
+Nesse caso:
+
+- o filho emite `acaoCancelada`
+- o pai captura esse evento com `(acaoCancelada)="onCancelar()"`
+
+### Exemplo enviando valor
+
+```ts
+import { Component, EventEmitter, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-seletor-plano',
+  template: `
+    <button (click)="selecionar('Basico')">Basico</button>
+    <button (click)="selecionar('Premium')">Premium</button>
+  `
+})
+export class SeletorPlanoComponent {
+  @Output() planoSelecionado = new EventEmitter<string>();
+
+  selecionar(plano: string) {
+    this.planoSelecionado.emit(plano);
+  }
+}
+```
+
+```html
+<app-seletor-plano
+  (planoSelecionado)="atualizarPlano($event)"
+></app-seletor-plano>
+```
+
+```ts
+export class AppComponent {
+  planoAtual = '';
+
+  atualizarPlano(plano: string) {
+    this.planoAtual = plano;
+  }
+}
+```
+
+### Exemplo com alias
+
+Tambem e possivel renomear a saida usada no HTML:
+
+```ts
+import { Component, EventEmitter, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-alerta',
+  template: `<button (click)="fechar()">Fechar</button>`
+})
+export class AlertaComponent {
+  @Output('fechou') eventoFechar = new EventEmitter<void>();
+
+  fechar() {
+    this.eventoFechar.emit();
+  }
+}
+```
+
+```html
+<app-alerta (fechou)="onFechou()"></app-alerta>
+```
+
+Resumo:
+
+- `@Output()` envia eventos do filho para o pai
+- normalmente e usado com `EventEmitter`
+- o pai escuta o evento com sintaxe de event binding
+
 ## 19. O que este projeto praticou
 
 Com base no código e nos comentários, este projeto abordou:
@@ -1136,6 +1261,7 @@ Com base no código e nos comentários, este projeto abordou:
 - integração com Angular Material
 - composição de componentes
 - `@Input()`
+- `@Output()`
 
 ### Exemplo integrando vários conceitos
 
@@ -1204,6 +1330,7 @@ Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 - `()` escuta evento do template
 - `{{ }}` exibe valor no HTML
 - `@Input()` recebe valor do componente pai
+- `@Output()` emite evento do filho para o pai
 - `declarations` registra componentes do módulo
 - `imports` traz módulos necessários
 - `exports` libera componentes para outros módulos
@@ -1260,7 +1387,7 @@ Revisão do que aparece aqui:
 
 Depois do que foi visto aqui, a sequência mais natural de estudo seria:
 
-1. `@Output()`
+1. diretivas estruturais mais avançadas
 2. `*ngIf`, `*ngFor` e diretivas estruturais
 3. two-way binding com `[(ngModel)]`
 4. serviços e injeção de dependência
@@ -1284,6 +1411,28 @@ export class ProdutoComponent {
 
 ```html
 <app-produto [nome]="'Notebook'"></app-produto>
+```
+
+### Exemplo de `@Output()`
+
+```ts
+import { Component, EventEmitter, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-acao',
+  template: `<button (click)="executar()">Executar</button>`
+})
+export class AcaoComponent {
+  @Output() executou = new EventEmitter<void>();
+
+  executar() {
+    this.executou.emit();
+  }
+}
+```
+
+```html
+<app-acao (executou)="onExecutou()"></app-acao>
 ```
 
 ### Exemplo de `*ngIf`
