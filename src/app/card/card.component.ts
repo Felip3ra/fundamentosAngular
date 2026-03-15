@@ -36,8 +36,15 @@ export class CardComponent {
   //     preco: 100
   //   },
   // };
-  @Input('planTypeAlias') planType : string = ''
   @Input({required: true}) planPrice : number = 0
+  
+  private _planType: string = '';
+  @Input('planTypeAlias') set planType(value: string){
+    this._planType = value.toUpperCase();
+  }
+  get planType(): string{
+    return this._planType;
+  }
 
   buttonClicked(event: boolean){
     console.log(event)

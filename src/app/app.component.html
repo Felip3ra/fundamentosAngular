@@ -3,6 +3,7 @@
     <card-roxo></card-roxo>
     
 </div>
+
 <!--  
 A vinculação de propriedades no Angular permite definir valores para propriedades de elementos HTML, componentes Angular e muito mais.
 
@@ -55,3 +56,7 @@ Use a vinculação de propriedades para definir valores dinamicamente para propr
   'green-button': isGreen
 }
 ">objeto</button> -->
+
+<br/>
+
+<input type="text" #meuInput (keyup)="handleKeyup(meuInput.value)">

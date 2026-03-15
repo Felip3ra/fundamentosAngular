@@ -1241,6 +1241,75 @@ Resumo:
 - normalmente e usado com `EventEmitter`
 - o pai escuta o evento com sintaxe de event binding
 
+## 18.3 Decorator `@Input()` com `get` e `set`
+
+Tambem posso usar `@Input()` junto com `get` e `set` quando eu quero:
+
+- tratar o valor antes de salvar
+- validar o que veio do componente pai
+- padronizar formato (ex.: remover espacos)
+
+Ideia principal:
+
+- o `set` roda quando o valor chega do pai
+- o `get` devolve o valor tratado para o template ou para a classe
+
+### Exemplo do componente filho
+
+```ts
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-card-plano',
+  template: `
+    <h2>{{ titulo }}</h2>
+    <p>R$ {{ preco }}</p>
+  `
+})
+export class CardPlanoComponent {
+  private _titulo = '';
+  private _preco = 0;
+
+  @Input()
+  set titulo(valor: string) {
+    this._titulo = (valor ?? '').trim();
+  }
+
+  get titulo(): string {
+    return this._titulo;
+  }
+
+  @Input()
+  set preco(valor: number) {
+    this._preco = valor > 0 ? valor : 0;
+  }
+
+  get preco(): number {
+    return this._preco;
+  }
+}
+```
+
+### Exemplo do componente pai
+
+```html
+<app-card-plano
+  [titulo]="'   Plano Premium   '"
+  [preco]="-50"
+></app-card-plano>
+```
+
+Resultado esperado:
+
+- `titulo` chega com espacos, mas no filho fica sem espacos
+- `preco` negativo vira `0` pela validacao no `set`
+
+Resumo:
+
+- `@Input()` com `set` e util para validar e transformar valores de entrada
+- `get` deixa o acesso ao valor organizado e legivel
+- essa abordagem ajuda a proteger o componente filho de valores invalidos
+
 ## 19. O que este projeto praticou
 
 Com base no código e nos comentários, este projeto abordou:

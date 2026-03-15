@@ -54,4 +54,8 @@ export class AppComponent {
   // isGreen = true;
   cardPlanType = 'Simples';
   cardPlanValue = 100;
+
+  handleKeyup(text: string){
+    this.cardPlanType = text;
+  }
 }
