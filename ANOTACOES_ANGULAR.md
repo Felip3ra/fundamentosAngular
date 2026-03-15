@@ -1310,6 +1310,89 @@ Resumo:
 - `get` deixa o acesso ao valor organizado e legivel
 - essa abordagem ajuda a proteger o componente filho de valores invalidos
 
+## 18.4 Propriedade `transform` do `@Input()`
+
+A propriedade `transform` do `@Input()` permite transformar o valor recebido do componente pai antes de salvar no filho.
+
+Em outras palavras:
+
+- o pai envia o valor
+- o Angular aplica a funcao de transformacao
+- o componente filho recebe o valor ja tratado
+
+Quando usar:
+
+- para converter string em boolean ou numero
+- para aplicar valor padrao
+- para normalizar dados recebidos (trim, uppercase, etc.)
+
+### Sintaxe basica
+
+```ts
+@Input({ transform: minhaFuncao }) propriedade = valorInicial;
+```
+
+### Exemplo com transformacoes prontas do Angular
+
+```ts
+import { Component, Input, booleanAttribute, numberAttribute } from '@angular/core';
+
+@Component({
+  selector: 'app-filtro',
+  template: `
+    <p>Ativo: {{ ativo }}</p>
+    <p>Limite: {{ limite }}</p>
+  `
+})
+export class FiltroComponent {
+  @Input({ transform: booleanAttribute }) ativo = false;
+  @Input({ transform: numberAttribute }) limite = 0;
+}
+```
+
+### Exemplo no componente pai
+
+```html
+<app-filtro ativo limite="10"></app-filtro>
+```
+
+Nesse caso:
+
+- `ativo` vira `true` por causa do `booleanAttribute`
+- `limite` vira `10` (number) por causa do `numberAttribute`
+
+### Exemplo com transformacao customizada
+
+```ts
+import { Component, Input } from '@angular/core';
+
+function normalizarTitulo(valor: string | null | undefined): string {
+  return (valor ?? 'sem titulo').trim().toUpperCase();
+}
+
+@Component({
+  selector: 'app-card-titulo',
+  template: `<h2>{{ titulo }}</h2>`
+})
+export class CardTituloComponent {
+  @Input({ transform: normalizarTitulo }) titulo = 'SEM TITULO';
+}
+```
+
+```html
+<app-card-titulo [titulo]="'   Plano Gold   '"></app-card-titulo>
+```
+
+Resultado esperado:
+
+- o filho recebe `PLANO GOLD`, mesmo com espacos enviados pelo pai
+
+Resumo:
+
+- `transform` deixa o `@Input()` mais limpo e declarativo
+- evita repetir logica de tratamento dentro de `set`
+- ajuda a padronizar entradas do componente
+
 ## 19. O que este projeto praticou
 
 Com base no código e nos comentários, este projeto abordou:
@@ -1330,6 +1413,7 @@ Com base no código e nos comentários, este projeto abordou:
 - integração com Angular Material
 - composição de componentes
 - `@Input()`
+- propriedade `transform` do `@Input()`
 - `@Output()`
 
 ### Exemplo integrando vários conceitos
