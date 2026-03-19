@@ -1,13 +1,15 @@
-<div class="card"
-[class]="{
-    'card--orange': cardStyle === 'orange' ? true:false,
-    'card--purple': cardStyle === 'purple' ? true:false
-}"
+<div
+  class="card"
+  [ngClass]="{
+    'card--orange': cardStyle === 'orange',
+    'card--purple': cardStyle === 'purple'
+  }"
 >
-    <div class="card__plan card__item">Plano <b>{{planType}}</b></div>
-    <div class="card__price card__item">R${{planPrice}},00/mês</div>
-    <app-button
+  <div class="card__plan card__item">Plano <b>{{ planType }}</b></div>
+  <div class="card__price card__item">R${{ planPrice }},00/mes</div>
+  <app-button
     [text]="'Adquirir'"
     [style]="cardStyle === 'orange' ? 'white' : 'purple'"
-    ></app-button>
+    (clicked)="onButtonClicked()"
+  ></app-button>
 </div>

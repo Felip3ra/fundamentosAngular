@@ -9,4 +9,7 @@ export class AppComponent {
   buttonClicked(){
     alert('Button clicked!');
   }
+  onCardButtonClicked(){
+    console.log('sim')
+  }
 }
