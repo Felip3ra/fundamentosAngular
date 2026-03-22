@@ -458,6 +458,71 @@ Resumo:
 - use `ngClass` quando precisar lidar com várias classes
 - `class binding` é melhor do que `style binding` quando o estilo já existe no CSS
 
+## 5.4 Two-Way Data Binding
+
+O `two-way data binding` conecta o template e a classe em duas direções.
+
+Em outras palavras:
+
+- quando o usuário altera o campo, a variável na classe é atualizada
+- quando a variável muda na classe, o campo no template também muda
+
+No Angular, isso é feito com a sintaxe:
+
+```html
+[(ngModel)]="minhaVariavel"
+```
+
+Esse formato é conhecido como "banana in a box" e combina:
+
+- property binding: `[ngModel]`
+- event binding: `(ngModelChange)`
+
+### Pré-requisito
+
+Para usar `ngModel`, o módulo precisa importar `FormsModule`.
+
+```ts
+import { FormsModule } from '@angular/forms';
+
+@NgModule({
+  imports: [FormsModule]
+})
+export class AppModule {}
+```
+
+### Exemplo simples com input
+
+```ts
+export class PerfilComponent {
+  nome = 'Felipe';
+}
+```
+
+```html
+<input [(ngModel)]="nome" />
+<p>Nome digitado: {{ nome }}</p>
+```
+
+### Exemplo com checkbox
+
+```ts
+export class TermosComponent {
+  aceitou = false;
+}
+```
+
+```html
+<input type="checkbox" [(ngModel)]="aceitou" />
+<p>{{ aceitou ? 'Aceitou os termos' : 'Não aceitou os termos' }}</p>
+```
+
+Resumo:
+
+- `[(ngModel)]` faz ligação de ida e volta
+- é útil para formulários e campos editáveis
+- sem `FormsModule`, o `ngModel` não funciona
+
 ## 6. Event Binding
 
 No mesmo exemplo do `AppComponent`, foram usados eventos:
@@ -1128,10 +1193,10 @@ Em outras palavras:
 Quando usar:
 
 - para avisar o pai que algo aconteceu no filho
-- para comunicar clique, cancelamento, selecao ou atualizacao
-- para comunicacao de filho para pai
+- para comunicar clique, cancelamento, seleção ou atualização
+- para comunicação de filho para pai
 
-### Sintaxe basica
+### Sintaxe básica
 
 ```ts
 @Output() nomeDoEvento = new EventEmitter<TipoDoValor>();
@@ -1213,7 +1278,7 @@ export class AppComponent {
 
 ### Exemplo com alias
 
-Tambem e possivel renomear a saida usada no HTML:
+Também é possível renomear a saída usada no HTML:
 
 ```ts
 import { Component, EventEmitter, Output } from '@angular/core';
@@ -1243,7 +1308,7 @@ Resumo:
 
 ## 18.3 Decorator `@Input()` com `get` e `set`
 
-Tambem posso usar `@Input()` junto com `get` e `set` quando eu quero:
+Também posso usar `@Input()` junto com `get` e `set` quando eu quero:
 
 - tratar o valor antes de salvar
 - validar o que veio do componente pai
@@ -1302,11 +1367,11 @@ export class CardPlanoComponent {
 Resultado esperado:
 
 - `titulo` chega com espacos, mas no filho fica sem espacos
-- `preco` negativo vira `0` pela validacao no `set`
+- `preco` negativo vira `0` pela validação no `set`
 
 Resumo:
 
-- `@Input()` com `set` e util para validar e transformar valores de entrada
+- `@Input()` com `set` e útil para validar e transformar valores de entrada
 - `get` deixa o acesso ao valor organizado e legivel
 - essa abordagem ajuda a proteger o componente filho de valores invalidos
 
@@ -1317,7 +1382,7 @@ A propriedade `transform` do `@Input()` permite transformar o valor recebido do 
 Em outras palavras:
 
 - o pai envia o valor
-- o Angular aplica a funcao de transformacao
+- o Angular aplica a função de transformação
 - o componente filho recebe o valor ja tratado
 
 Quando usar:
@@ -1326,7 +1391,7 @@ Quando usar:
 - para aplicar valor padrao
 - para normalizar dados recebidos (trim, uppercase, etc.)
 
-### Sintaxe basica
+### Sintaxe básica
 
 ```ts
 @Input({ transform: minhaFuncao }) propriedade = valorInicial;
@@ -1361,7 +1426,7 @@ Nesse caso:
 - `ativo` vira `true` por causa do `booleanAttribute`
 - `limite` vira `10` (number) por causa do `numberAttribute`
 
-### Exemplo com transformacao customizada
+### Exemplo com transformação customizada
 
 ```ts
 import { Component, Input } from '@angular/core';
@@ -1390,7 +1455,7 @@ Resultado esperado:
 Resumo:
 
 - `transform` deixa o `@Input()` mais limpo e declarativo
-- evita repetir logica de tratamento dentro de `set`
+- evita repetir lógica de tratamento dentro de `set`
 - ajuda a padronizar entradas do componente
 
 ## 19. O que este projeto praticou
@@ -1402,6 +1467,7 @@ Com base no código e nos comentários, este projeto abordou:
 - declaração, importação e exportação
 - property binding
 - event binding
+- two-way data binding com `[(ngModel)]`
 - interpolação
 - tipagem com interfaces
 - estilos globais e locais
@@ -1481,6 +1547,7 @@ Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 - `[style.x]` envia valor para um estilo CSS inline
 - `[class.x]` ativa ou remove uma classe CSS
 - `()` escuta evento do template
+- `[(ngModel)]` cria two-way data binding entre template e classe
 - `{{ }}` exibe valor no HTML
 - `@Input()` recebe valor do componente pai
 - `@Output()` emite evento do filho para o pai
@@ -1542,7 +1609,7 @@ Depois do que foi visto aqui, a sequência mais natural de estudo seria:
 
 1. diretivas estruturais mais avançadas
 2. `*ngIf`, `*ngFor` e diretivas estruturais
-3. two-way binding com `[(ngModel)]`
+3. validações de formulario (template-driven e reativo)
 4. serviços e injeção de dependência
 5. rotas
 6. formulários reativos
@@ -1681,3 +1748,4 @@ export class ApiComponent {
   }
 }
 ```
+
