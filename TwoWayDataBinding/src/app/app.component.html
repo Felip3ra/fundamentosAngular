@@ -3,7 +3,25 @@
 
 <h1>nome digitado: {{name}}</h1> -->
 
-<h1>Nome: </h1>
+<!-- <h1>Nome: </h1>
 <input type="text" [(ngModel)]="name"/>
 
-<h1>nome digitado: {{name}}</h1>
+<h1>nome digitado: {{name}}</h1> -->
+
+<div class="list">
+    <app-person 
+    *ngFor="let person of listPeople;
+    let i = index;
+    let isOdd = odd;
+    let isFirst = first;
+    let isLast = last;"
+    [personName]="person.name"
+    [personAge]="person.age"
+    [personIndex]="i"
+    [isOdd]="isOdd"
+    [isFirst]="isFirst"
+    [isLast]="isLast"
+    [isSelected]="personSelectedIndex === i"
+    (personSelected)="selectPerson($event)"
+    ></app-person>
+</div>

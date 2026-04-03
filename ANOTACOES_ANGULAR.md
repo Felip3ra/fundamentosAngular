@@ -181,7 +181,7 @@ import { Component } from '@angular/core';
 export class ExemploComponent {}
 ```
 
-## 5. Property Binding
+## 5. Vinculação de propriedade (`Property Binding`)
 
 No `AppComponent`, foi trabalhada a vinculação de propriedades.
 
@@ -225,7 +225,7 @@ export class AppComponent {
 />
 ```
 
-## 5.1 Attribute Binding
+## 5.1 Vinculação de atributo (`Attribute Binding`)
 
 Além de `property binding`, o Angular também permite fazer binding de atributos HTML.
 
@@ -291,7 +291,7 @@ Resumo:
 - use `[attr.x]` para atributos HTML
 - `attribute binding` é muito comum em tabelas e acessibilidade
 
-## 5.2 CSS Style Binding
+## 5.2 Vinculação de estilo CSS (`Style Binding`)
 
 O Angular permite aplicar estilos CSS dinamicamente direto no template.
 
@@ -366,7 +366,7 @@ Resumo:
 - use `[style.propriedade.unidade]` quando precisar de `px`, `%` e similares
 - `style binding` é útil para mudanças visuais rápidas controladas pelo componente
 
-## 5.3 CSS Class Binding
+## 5.3 Vinculação de classe CSS (`Class Binding`)
 
 O Angular também permite adicionar ou remover classes CSS dinamicamente.
 
@@ -458,7 +458,7 @@ Resumo:
 - use `ngClass` quando precisar lidar com várias classes
 - `class binding` é melhor do que `style binding` quando o estilo já existe no CSS
 
-## 5.4 Two-Way Data Binding
+## 5.4 Vinculação em duas vias (`Two-Way Data Binding`)
 
 O `two-way data binding` conecta o template e a classe em duas direções.
 
@@ -1247,7 +1247,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 @Component({
   selector: 'app-seletor-plano',
   template: `
-    <button (click)="selecionar('Basico')">Basico</button>
+    <button (click)="selecionar('Básico')">Básico</button>
     <button (click)="selecionar('Premium')">Premium</button>
   `
 })
@@ -1372,8 +1372,8 @@ Resultado esperado:
 Resumo:
 
 - `@Input()` com `set` e útil para validar e transformar valores de entrada
-- `get` deixa o acesso ao valor organizado e legivel
-- essa abordagem ajuda a proteger o componente filho de valores invalidos
+- `get` deixa o acesso ao valor organizado e legível
+- essa abordagem ajuda a proteger o componente filho de valores inválidos
 
 ## 18.4 Propriedade `transform` do `@Input()`
 
@@ -1387,8 +1387,8 @@ Em outras palavras:
 
 Quando usar:
 
-- para converter string em boolean ou numero
-- para aplicar valor padrao
+- para converter string em boolean ou número
+- para aplicar valor padrão
 - para normalizar dados recebidos (trim, uppercase, etc.)
 
 ### Sintaxe básica
@@ -1397,7 +1397,7 @@ Quando usar:
 @Input({ transform: minhaFuncao }) propriedade = valorInicial;
 ```
 
-### Exemplo com transformacoes prontas do Angular
+### Exemplo com transformações prontas do Angular
 
 ```ts
 import { Component, Input, booleanAttribute, numberAttribute } from '@angular/core';
@@ -1458,7 +1458,617 @@ Resumo:
 - evita repetir lógica de tratamento dentro de `set`
 - ajuda a padronizar entradas do componente
 
-## 19. O que este projeto praticou
+## 19. Diretivas estruturais: `*ngIf` e `*ngFor`
+
+As diretivas estruturais do Angular permitem modificar a estrutura do DOM, ou seja, adicionar, remover ou repetir elementos na tela.
+
+As mais comuns são:
+
+- `*ngIf`: mostra ou oculta um elemento com base em uma condição
+- `*ngFor`: repete um elemento para cada item de uma lista
+
+Essas diretivas usam o asterisco `*` como sintaxe especial porque, por baixo dos panos, o Angular transforma isso em uma `ng-template`.
+
+### Pré-requisito
+
+Para usar `*ngIf` e `*ngFor`, o módulo precisa ter acesso às diretivas básicas do Angular.
+
+Regra prática:
+
+- em feature modules, normalmente isso vem de `CommonModule`
+- no módulo raiz, isso já costuma vir por meio de `BrowserModule`
+
+Exemplo em um feature module:
+
+```ts
+import { CommonModule } from '@angular/common';
+
+@NgModule({
+  imports: [CommonModule]
+})
+export class SharedModule {}
+```
+
+### Como funciona o asterisco
+
+Quando o Angular vê `*ngIf`, ele interpreta como:
+
+```html
+<elemento *ngIf="condicao">Conteúdo</elemento>
+```
+
+E transforma internamente em:
+
+```html
+<ng-template [ngIf]="condicao">
+  <elemento>Conteúdo</elemento>
+</ng-template>
+```
+
+O mesmo vale para `*ngFor`:
+
+```html
+<li *ngFor="let item of lista"> {{ item }} </li>
+```
+
+Torna-se:
+
+```html
+<ng-template ngFor let-item [ngForOf]="lista">
+  <li>{{ item }}</li>
+</ng-template>
+```
+
+Resumo mental:
+
+- `*` é um açúcar sintático
+- por baixo é `ng-template`
+- o Angular processa isso antes de renderizar
+
+---
+
+## 19.1 A diretiva `*ngIf`
+
+A diretiva `*ngIf` mostra ou remove um elemento do DOM com base em uma condição booleana.
+
+Diferença principal:
+
+- `display: none` esconde visualmente, mas o elemento continua no DOM
+- `*ngIf` remove o elemento do DOM completamente
+
+Quando usar:
+
+- para esconder seções que só devem aparecer em determinadas situações
+- para liberar memória quando um componente não é mais necessário
+- para evitar renderizar elementos pesados quando não são visíveis
+
+### Sintaxe básica
+
+```html
+<elemento *ngIf="condicao">Conteúdo</elemento>
+```
+
+### Exemplo simples
+
+```ts
+export class AuthComponent {
+  autenticado = false;
+}
+```
+
+```html
+<p *ngIf="autenticado">Bem-vindo ao sistema</p>
+<p *ngIf="!autenticado">Por favor, faça login</p>
+```
+
+### Exemplo com `else`
+
+O Angular permite usar um bloco `else` com `ng-template`.
+
+```ts
+export class StatusComponent {
+  online = true;
+}
+```
+
+```html
+<p *ngIf="online; else offlineTemplate">Usuário está online</p>
+
+<ng-template #offlineTemplate>
+  <p>Usuário está offline</p>
+</ng-template>
+```
+
+### Exemplo com `then` e `else`
+
+Também é possível usar `then` para definir o bloco verdadeiro e `else` para o bloco falso.
+
+```ts
+export class PlanoComponent {
+  premium = true;
+}
+```
+
+```html
+<ng-container *ngIf="premium; then planoPremium; else planoBasico"></ng-container>
+
+<ng-template #planoPremium>
+  <p>Benefícios do plano Premium</p>
+</ng-template>
+
+<ng-template #planoBasico>
+  <p>Benefícios do plano Básico</p>
+</ng-template>
+```
+
+### Exemplo com `as`
+
+O `*ngIf` também pode armazenar o valor em uma variável usando `as`.
+
+```ts
+export class UsuarioComponent {
+  usuario = { nome: 'Fernanda', role: 'admin' };
+}
+```
+
+```html
+<div *ngIf="usuario as u">
+  <p>{{ u.nome }}</p>
+  <p>{{ u.role }}</p>
+</div>
+```
+
+### Exemplo com variáveis implícitas
+
+O Angular disponibiliza algumas variáveis dentro do contexto do `ngIf`:
+
+- `$implicit`: o valor da condição
+- `ngIf`: a própria diretiva
+- `then`: referência ao bloco then
+- `else`: referência ao bloco else
+
+```ts
+export class ListaComponent {
+  itens: string[] = [];
+}
+```
+
+```html
+<ng-container
+  *ngIf="itens.length > 0; then lista; else vazio"
+></ng-container>
+
+<ng-template #lista>
+  <ul>
+    <li *ngFor="let item of itens">{{ item }}</li>
+  </ul>
+</ng-template>
+
+<ng-template #vazio>
+  <p>Nenhum item encontrado</p>
+</ng-template>
+```
+
+Resumo:
+
+- `*ngIf` remove ou adiciona elementos no DOM
+- use `else` com `ng-template` para conteúdo alternativo
+- use `as` para armazenar o valor em uma variável
+- `ng-container` evita div extra no HTML
+
+---
+
+## 19.2 A diretiva `*ngFor`
+
+A diretiva `*ngFor` repete um elemento para cada item de uma lista.
+
+Diferença principal:
+
+- `for` itera sobre uma coleção
+- cada repetição gera uma nova instância do elemento no DOM
+
+Quando usar:
+
+- para listar produtos, usuários, tarefas e similares
+- para criar listas dinâmicas baseadas em dados do componente
+- para renderizar menus, tabelas e cards em loop
+
+### Sintaxe básica
+
+```html
+<elemento *ngFor="let item of lista">{{ item }}</elemento>
+```
+
+### Exemplo simples com array de strings
+
+```ts
+export class CursoComponent {
+  cursos = ['Angular', 'TypeScript', 'RxJS'];
+}
+```
+
+```html
+<ul>
+  <li *ngFor="let curso of cursos">{{ curso }}</li>
+</ul>
+```
+
+Resultado no DOM:
+
+```html
+<li>Angular</li>
+<li>TypeScript</li>
+<li>RxJS</li>
+```
+
+### Exemplo com array de objetos
+
+```ts
+export class ProdutoComponent {
+  produtos = [
+    { nome: 'Notebook', preco: 3500 },
+    { nome: 'Mouse', preco: 80 },
+    { nome: 'Teclado', preco: 200 }
+  ];
+}
+```
+
+```html
+<div *ngFor="let produto of produtos">
+  <p>{{ produto.nome }} - R$ {{ produto.preco }}</p>
+</div>
+```
+
+### Exemplo com índice
+
+O Angular disponibiliza a variável `index` dentro do contexto do `ngFor`.
+
+```ts
+export class ListaComponent {
+  frutas = ['Maçã', 'Banana', 'Uva'];
+}
+```
+
+```html
+<ul>
+  <li *ngFor="let fruta of frutas; let i = index">
+    {{ i + 1 }} - {{ fruta }}
+  </li>
+</ul>
+```
+
+Resultado:
+
+```html
+<li>1 - Maçã</li>
+<li>2 - Banana</li>
+<li>3 - Uva</li>
+```
+
+### Exemplo com `trackBy`
+
+O `trackBy` ajuda o Angular a identificar quais itens mudaram, otimizando a re-renderização.
+
+```ts
+export class CatalogoComponent {
+  produtos = [
+    { id: 1, nome: 'Camisa' },
+    { id: 2, nome: 'Calça' },
+    { id: 3, nome: 'Sapato' }
+  ];
+
+  trackById(index: number, produto: any): number {
+    return produto.id;
+  }
+}
+```
+
+```html
+<div *ngFor="let produto of produtos; trackBy: trackById">
+  <p>{{ produto.nome }}</p>
+</div>
+```
+
+Quando a lista for atualizada:
+
+- sem `trackBy`: o Angular recria todos os elementos
+- com `trackBy`: o Angular recria apenas os que realmente mudaram
+
+### Exemplo com `first` e `last`
+
+O Angular disponibiliza `first` e `last` para identificar o primeiro e último item.
+
+```ts
+export class MenuComponent {
+  itens = ['Home', 'Sobre', 'Contato'];
+}
+```
+
+```html
+<ul>
+  <li *ngFor="let item of itens; let primeiro = first; let ultimo = last"
+      [class.primeiro]="primeiro"
+      [class.ultimo]="ultimo">
+    {{ item }}
+  </li>
+</ul>
+```
+
+```scss
+.primeiro {
+  border-top: 1px solid #ccc;
+}
+
+.ultimo {
+  border-bottom: 1px solid #ccc;
+}
+```
+
+### Exemplo com `even` e `odd`
+
+O Angular disponibiliza `even` e `odd` para identificar itens pares e ímpares.
+
+```ts
+export class TabelaComponent {
+  usuarios = ['Ana', 'Bruno', 'Carla', 'Daniel'];
+}
+```
+
+```html
+<tr *ngFor="let usuario of usuarios; let par = even"
+    [class.linha-par]="par">
+  <td>{{ usuario }}</td>
+</tr>
+```
+
+### Exemplo de `NgFor` com componente filho
+
+Um uso muito comum do `*ngFor` e repetir um componente filho em vez de repetir HTML puro.
+
+Nesse formato:
+
+- o componente pai percorre a lista
+- cada item da lista vira uma instancia do componente filho
+- o pai envia dados com `@Input()`
+- o filho devolve acoes com `@Output()`
+
+### Exemplo no componente pai
+
+```ts
+export class AppComponent {
+  personSelectedIndex: number | undefined;
+
+  listPeople = [
+    { name: 'Joao', age: 30 },
+    { name: 'Maria', age: 25 },
+    { name: 'Pedro', age: 35 },
+    { name: 'Ana', age: 28 },
+  ];
+
+  selectPerson(index: number) {
+    this.personSelectedIndex = index;
+  }
+}
+```
+
+```html
+<div class="list">
+  <app-person
+    *ngFor="let person of listPeople;
+    let i = index;
+    let isOdd = odd;
+    let isFirst = first;
+    let isLast = last;"
+    [personName]="person.name"
+    [personAge]="person.age"
+    [personIndex]="i"
+    [isOdd]="isOdd"
+    [isFirst]="isFirst"
+    [isLast]="isLast"
+    [isSelected]="personSelectedIndex === i"
+    (personSelected)="selectPerson($event)"
+  ></app-person>
+</div>
+```
+
+### Exemplo no componente filho
+
+```ts
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+
+@Component({
+  selector: 'app-person',
+  templateUrl: './person.html',
+  styleUrl: './person.scss',
+})
+export class Person {
+  @Input({ required: true }) personName = '';
+  @Input({ required: true }) personAge = 0;
+  @Input({ required: true }) personIndex = 0;
+  @Input({ required: true }) isOdd = false;
+  @Input({ required: true }) isFirst = false;
+  @Input({ required: true }) isLast = false;
+  @Input({ required: true }) isSelected = false;
+
+  @Output() personSelected = new EventEmitter<number>();
+
+  onPersonSelected() {
+    this.personSelected.emit(this.personIndex);
+  }
+}
+```
+
+```html
+<div class="item"
+  [class.item--odd]="isOdd"
+  [class.item--highlighted]="isSelected"
+  (click)="onPersonSelected()"
+>
+  <p class="item__name">{{ personIndex }} - {{ personName }}</p>
+  <p class="item__age">{{ personAge }} anos</p>
+  <p class="item__age" *ngIf="isFirst">E o primeiro</p>
+  <p class="item__age" *ngIf="isLast">E o ultimo</p>
+</div>
+```
+
+O que esse exemplo ensina:
+
+- `*ngFor` pode repetir componentes completos, nao apenas tags HTML simples
+- `index`, `odd`, `first` e `last` podem ser repassados para o filho
+- o estado de selecao continua controlado no pai
+- o filho fica responsavel apenas por exibir dados e emitir eventos
+- isso deixa a tela mais organizada e o componente mais reutilizavel
+
+Resumo:
+
+- `*ngFor` repete elementos no DOM
+- use `index` para numerar ou identificar posições
+- use `trackBy` para otimizar re-renderizações
+- use `first`, `last`, `even`, `odd` para estilizar itens específicos
+
+---
+
+## 19.3 Combinando `*ngIf` e `*ngFor`
+
+É comum precisar usar as duas diretivas juntas.
+
+### Exemplo: lista com verificação de conteúdo
+
+```ts
+export class ListaProdutosComponent {
+  produtos: any[] = [];
+}
+```
+
+```html
+<div *ngIf="produtos.length > 0; else semProdutos">
+  <div *ngFor="let produto of produtos">
+    <p>{{ produto.nome }}</p>
+  </div>
+</div>
+
+<ng-template #semProdutos>
+  <p>Nenhum produto cadastrado</p>
+</ng-template>
+```
+
+### Exemplo: mostrar detalhes ao clicar
+
+```ts
+export class DetalhesComponent {
+  itens = [
+    { id: 1, titulo: 'Angular', detalhes: 'Framework completo' },
+    { id: 2, titulo: 'TypeScript', detalhes: 'Superset do JavaScript' }
+  ];
+
+  itemSelecionado: any = null;
+
+  selecionar(item: any) {
+    this.itemSelecionado = item;
+  }
+}
+```
+
+```html
+<div *ngFor="let item of itens">
+  <h3 (click)="selecionar(item)">{{ item.titulo }}</h3>
+  <p *ngIf="itemSelecionado === item">{{ item.detalhes }}</p>
+</div>
+```
+
+Resumo:
+
+- combine as diretivas para criar interfaces dinâmicas
+- `ng-container` evita divs extras quando não precisa de wrapper
+- use `*ngIf` dentro de `*ngFor` para mostrar detalhes condicionais
+
+---
+
+## 19.4 Diferença entre `*ngIf` e `[style.display]` ou `[hidden]`
+
+É importante entender quando usar cada abordagem:
+
+| Abordagem | Remove do DOM? | Uso de memória | Inicialização |
+|-----------|---------------|----------------|---------------|
+| `*ngIf` | Sim | Não aloca | Recria ao aparecer |
+| `[hidden]` | Não | Aloca (esconde) | Pronto para mostrar |
+| `[style.display]` | Não | Aloca (esconde) | Pronto para mostrar |
+
+### Exemplo com `[hidden]`
+
+```ts
+export class TabComponent {
+  tabAtiva = 1;
+}
+```
+
+```html
+<div [hidden]="tabAtiva !== 1">Conteúdo da aba 1</div>
+<div [hidden]="tabAtiva !== 2">Conteúdo da aba 2</div>
+```
+
+### Quando usar cada um
+
+- use `*ngIf` quando o elemento for pesado e só precisar existir em certos momentos
+- use `[hidden]` quando o elemento for leve e precise aparecer rapidamente
+- prefira `*ngIf` para condições de autenticação, permissões e estados críticos
+
+Resumo:
+
+- `*ngIf`: remove completamente o elemento
+- `[hidden]`: esconde visualmente, mas mantém no DOM
+- escolha com base em performance e necessidade de memória
+
+---
+
+## 19.5 `ng-container` e `ng-template`
+
+Esses dois elementos são especiais no Angular.
+
+### `ng-container`
+
+- não gera elemento no DOM
+- serve como wrapper sem adicionar tags extras
+- útil quando precisa de `*ngIf` ou `*ngFor` sem mudar o HTML
+
+```html
+<table>
+  <tr *ngFor="let usuario of usuarios">
+    <ng-container *ngIf="usuario.ativo">
+      <td>{{ usuario.nome }}</td>
+      <td>{{ usuario.email }}</td>
+    </ng-container>
+  </tr>
+</table>
+```
+
+Sem `ng-container`, teria uma `div` extra dentro de `tr`, o que quebraria a tabela.
+
+### `ng-template`
+
+- não renderiza nada por padrão
+- só aparece quando referenciado explicitamente
+- usado com `*ngIf`, `else`, `then` ou manualmente via `ViewChild`
+
+```html
+<ng-template #loading>
+  <p>Carregando...</p>
+</ng-template>
+
+<div *ngIf="carregando; else loading">
+  <p>Dados carregados</p>
+</div>
+```
+
+Resumo:
+
+- `ng-container`: wrapper sem tag no DOM
+- `ng-template`: conteúdo que só aparece quando chamado
+- use `ng-container` para evitar divs extras em loops e condições
+
+---
+
+## 20. O que este projeto praticou
 
 Com base no código e nos comentários, este projeto abordou:
 
@@ -1467,7 +2077,7 @@ Com base no código e nos comentários, este projeto abordou:
 - declaração, importação e exportação
 - property binding
 - event binding
-- two-way data binding com `[(ngModel)]`
+- vinculação em duas vias com `[(ngModel)]`
 - interpolação
 - tipagem com interfaces
 - estilos globais e locais
@@ -1481,6 +2091,10 @@ Com base no código e nos comentários, este projeto abordou:
 - `@Input()`
 - propriedade `transform` do `@Input()`
 - `@Output()`
+- `*ngIf`
+- `*ngFor`
+- `ng-container`
+- `ng-template`
 
 ### Exemplo integrando vários conceitos
 
@@ -1531,14 +2145,14 @@ Nesse exemplo aparecem:
 
 - componente
 - interpolação
-- property binding
-- attribute binding
-- style binding
-- class binding
-- event binding
+- vinculação de propriedade
+- vinculação de atributo
+- vinculação de estilo
+- vinculação de classe
+- vinculação de evento
 - organização entre classe e template
 
-## 20. Resumo rápido para revisão
+## 21. Resumo rápido para revisão
 
 Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 
@@ -1547,7 +2161,7 @@ Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 - `[style.x]` envia valor para um estilo CSS inline
 - `[class.x]` ativa ou remove uma classe CSS
 - `()` escuta evento do template
-- `[(ngModel)]` cria two-way data binding entre template e classe
+- `[(ngModel)]` cria vinculação em duas vias entre template e classe
 - `{{ }}` exibe valor no HTML
 - `@Input()` recebe valor do componente pai
 - `@Output()` emite evento do filho para o pai
@@ -1597,23 +2211,25 @@ export class RevisaoComponent {
 Revisão do que aparece aqui:
 
 - `{{ nome }}`: interpolação
-- `[disabled]`: property binding
-- `[attr.aria-label]`: attribute binding
-- `[style.color]`: CSS style binding
-- `[class.destaque]`: CSS class binding
-- `(click)`: event binding
+- `[disabled]`: vinculação de propriedade
+- `[attr.aria-label]`: vinculação de atributo
+- `[style.color]`: vinculação de estilo CSS
+- `[class.destaque]`: vinculação de classe CSS
+- `(click)`: vinculação de evento
 
-## 21. Próximos assuntos para continuar estudando
+## 22. Próximos assuntos para continuar estudando
 
 Depois do que foi visto aqui, a sequência mais natural de estudo seria:
 
-1. diretivas estruturais mais avançadas
-2. `*ngIf`, `*ngFor` e diretivas estruturais
-3. validações de formulario (template-driven e reativo)
-4. serviços e injeção de dependência
-5. rotas
-6. formulários reativos
-7. consumo de API com `HttpClient`
+1. ciclo de vida dos componentes (`ngOnInit`, `ngOnChanges`, `ngOnDestroy`)
+2. validações de formulário (template-driven e reativo)
+3. serviços e injeção de dependência
+4. rotas
+5. formulários reativos
+6. consumo de API com `HttpClient`
+7. comunicação entre componentes com serviços e estado compartilhado
+
+Alguns exemplos abaixo retomam conceitos já vistos e também antecipam assuntos que costumam aparecer na sequência do estudo.
 
 ### Exemplo de `@Input()`
 
@@ -1681,7 +2297,7 @@ export class ExemploForComponent {
 </li>
 ```
 
-### Exemplo de two-way binding com `[(ngModel)]`
+### Exemplo de vinculação em duas vias com `[(ngModel)]`
 
 ```ts
 export class ExemploModelComponent {
