@@ -366,6 +366,88 @@ Resumo:
 - use `[style.propriedade.unidade]` quando precisar de `px`, `%` e similares
 - `style binding` é útil para mudanças visuais rápidas controladas pelo componente
 
+## 5.2.1 Diretiva `ngStyle`
+
+O `ngStyle` permite aplicar varios estilos CSS de uma vez no mesmo elemento.
+
+Diferença principal:
+
+- `[style.propriedade]` funciona muito bem para um estilo isolado
+- `[ngStyle]` fica melhor quando varios estilos dependem do mesmo estado
+
+Quando usar:
+
+- quando voce quer montar um bloco de estilos dinamicos em um unico lugar
+- quando varias propriedades CSS mudam juntas
+- quando o template ficaria poluido com muitos bindings `[style.x]`
+
+### Sintaxe basica
+
+```html
+[ngStyle]="{
+  'propriedade-css': valor,
+  'outra-propriedade': outroValor
+}"
+```
+
+### Exemplo simples
+
+```ts
+export class CardComponent {
+  backgroundColor = 'lightblue';
+  fontSize = 18;
+  isHighlighted = true;
+}
+```
+
+```html
+<div
+  [ngStyle]="{
+    'background-color': backgroundColor,
+    'font-size.px': fontSize,
+    'font-weight': isHighlighted ? 'bold' : 'normal'
+  }"
+>
+  Conteudo do card
+</div>
+```
+
+### Exemplo com metodo
+
+Tambem e possivel centralizar a logica na classe e deixar o template mais limpo.
+
+```ts
+export class AlertaComponent {
+  ativo = true;
+
+  getAlertStyles() {
+    return {
+      'background-color': this.ativo ? '#dcfce7' : '#fee2e2',
+      'color': this.ativo ? '#166534' : '#991b1b',
+      'border': this.ativo ? '1px solid #22c55e' : '1px solid #ef4444'
+    };
+  }
+}
+```
+
+```html
+<div [ngStyle]="getAlertStyles()">
+  Mensagem do sistema
+</div>
+```
+
+### Quando preferir `ngStyle` ou `[style.x]`
+
+- prefira `[style.x]` quando so um estilo muda
+- prefira `[ngStyle]` quando varios estilos mudam juntos
+- se o visual representa estados como `ativo`, `erro` ou `selecionado`, muitas vezes `class binding` ainda e a melhor opcao
+
+Resumo:
+
+- `ngStyle` aplica varios estilos inline com um unico binding
+- ele recebe um objeto com propriedades CSS
+- ajuda a organizar melhor estilos dinamicos no template
+
 ## 5.3 Vinculação de classe CSS (`Class Binding`)
 
 O Angular também permite adicionar ou remover classes CSS dinamicamente.
@@ -457,6 +539,147 @@ Resumo:
 - use `[class.nome]` para ativar uma classe com base em condição
 - use `ngClass` quando precisar lidar com várias classes
 - `class binding` é melhor do que `style binding` quando o estilo já existe no CSS
+
+## 5.3.1 Diretiva `ngClass`
+
+O `ngClass` permite adicionar e remover varias classes CSS de uma vez.
+
+Diferença principal:
+
+- `[class.nome]` e bom quando voce quer controlar uma unica classe
+- `[ngClass]` fica melhor quando varias classes dependem do mesmo estado
+
+Quando usar:
+
+- quando um elemento pode assumir varios estados visuais
+- quando voce quer evitar varios bindings `[class.x]` no mesmo elemento
+- quando o CSS ja esta organizado em classes reutilizaveis
+
+### Sintaxe com objeto
+
+```html
+[ngClass]="{
+  ativo: condicao1,
+  erro: condicao2,
+  destaque: condicao3
+}"
+```
+
+### Exemplo simples
+
+```ts
+export class UsuarioComponent {
+  ativo = true;
+  admin = false;
+}
+```
+
+```html
+<div [ngClass]="{ ativo: ativo, admin: admin }">
+  Perfil do usuario
+</div>
+```
+
+```scss
+.ativo {
+  color: green;
+}
+
+.admin {
+  border: 2px solid blue;
+}
+```
+
+### Exemplo com array de classes
+
+O `ngClass` tambem pode receber um array.
+
+```ts
+export class CardComponent {
+  classes = ['card', 'card-destaque'];
+}
+```
+
+```html
+<div [ngClass]="classes">
+  Conteudo do card
+</div>
+```
+
+### Exemplo com metodo
+
+Tambem e possivel montar as classes na classe TypeScript.
+
+```ts
+export class BotaoComponent {
+  carregando = false;
+  desabilitado = true;
+
+  getButtonClasses() {
+    return {
+      loading: this.carregando,
+      disabled: this.desabilitado,
+      primary: !this.desabilitado
+    };
+  }
+}
+```
+
+```html
+<button [ngClass]="getButtonClasses()">
+  Salvar
+</button>
+```
+
+### Quando preferir `ngClass` ou `[class.x]`
+
+- prefira `[class.x]` quando so uma classe muda
+- prefira `[ngClass]` quando varias classes mudam juntas
+- se a mudanca for de estilo isolado e nao de classe reutilizavel, `ngStyle` pode ser mais adequado
+
+Resumo:
+
+- `ngClass` adiciona ou remove varias classes com um unico binding
+- ele pode receber objeto, array ou string
+- e uma forma pratica de representar estados visuais no template
+
+## 5.3.2 Comparando `ngStyle` e `ngClass`
+
+As duas diretivas ajudam a deixar o visual dinamico, mas atacam problemas diferentes.
+
+### Regra pratica
+
+- use `ngStyle` quando voce quer controlar propriedades CSS diretamente
+- use `ngClass` quando voce quer ligar e desligar classes CSS ja definidas
+
+### Comparacao rapida
+
+| Recurso | Melhor uso |
+|---|---|
+| `ngStyle` | mudar cor, tamanho, borda ou outros estilos inline |
+| `ngClass` | aplicar estados visuais como `ativo`, `erro`, `destaque` |
+
+### Exemplo lado a lado
+
+```html
+<div
+  [ngStyle]="{ 'font-size.px': fontSize, 'background-color': backgroundColor }"
+  [ngClass]="{ destaque: isHighlighted, desabilitado: isDisabled }"
+>
+  Exemplo visual
+</div>
+```
+
+Nesse caso:
+
+- `ngStyle` controla valores diretos como tamanho e cor
+- `ngClass` controla classes semanticas do CSS
+
+Resumo:
+
+- `ngStyle` mexe em propriedades CSS
+- `ngClass` mexe em classes CSS
+- os dois podem ser usados juntos no mesmo elemento
 
 ## 5.4 Vinculação em duas vias (`Two-Way Data Binding`)
 
@@ -1458,7 +1681,142 @@ Resumo:
 - evita repetir lógica de tratamento dentro de `set`
 - ajuda a padronizar entradas do componente
 
-## 19. Diretivas estruturais: `*ngIf` e `*ngFor`
+## 19. Pipes
+
+Pipes sao recursos do Angular usados para transformar valores direto no template.
+
+Em outras palavras:
+
+- o dado continua vindo da classe
+- o pipe altera a forma como esse dado e exibido
+- isso evita colocar formatacao simples demais dentro do componente
+
+Quando usar:
+
+- para formatar datas, moedas, porcentagens e textos
+- para transformar um valor antes de mostrar na tela
+- para reaproveitar formatacoes no template
+
+### Sintaxe basica
+
+```html
+{{ valor | nomeDoPipe }}
+```
+
+Tambem e possivel passar parametros:
+
+```html
+{{ valor | nomeDoPipe:param1:param2 }}
+```
+
+### Exemplo com `uppercase`
+
+```ts
+export class PerfilComponent {
+  nome = 'felipe';
+}
+```
+
+```html
+<p>{{ nome | uppercase }}</p>
+```
+
+Resultado esperado:
+
+```html
+<p>FELIPE</p>
+```
+
+### Exemplo com `date`
+
+```ts
+export class EventoComponent {
+  dataEvento = new Date();
+}
+```
+
+```html
+<p>{{ dataEvento | date:'dd/MM/yyyy' }}</p>
+```
+
+### Exemplo com `currency`
+
+```ts
+export class ProdutoComponent {
+  preco = 149.9;
+}
+```
+
+```html
+<p>{{ preco | currency:'BRL' }}</p>
+```
+
+### Exemplo com encadeamento de pipes
+
+Tambem e possivel usar mais de um pipe na mesma expressao.
+
+```ts
+export class UsuarioComponent {
+  nome = 'maria fernanda';
+}
+```
+
+```html
+<p>{{ nome | titlecase | slice:0:5 }}</p>
+```
+
+### Pipes comuns do Angular
+
+- `uppercase`: transforma texto em maiusculas
+- `lowercase`: transforma texto em minusculas
+- `titlecase`: coloca iniciais em maiusculas
+- `date`: formata datas
+- `currency`: formata valores monetarios
+- `percent`: formata porcentagens
+- `number`: formata numeros
+- `slice`: recorta texto ou arrays
+- `json`: ajuda a inspecionar objetos no template
+
+### Exemplo de pipe customizado
+
+Quando os pipes prontos nao resolvem, voce pode criar um pipe proprio.
+
+```ts
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'saudacao'
+})
+export class SaudacaoPipe implements PipeTransform {
+  transform(valor: string): string {
+    return `Ola, ${valor}!`;
+  }
+}
+```
+
+```html
+<p>{{ 'Felipe' | saudacao }}</p>
+```
+
+### Pipe puro e impuro
+
+Regra pratica:
+
+- pipes puros executam quando a referencia do valor muda
+- pipes impuros podem executar em mais ciclos e custam mais performance
+
+Na maior parte dos casos:
+
+- prefira pipes puros
+- deixe pipes impuros para cenarios bem especificos
+
+Resumo:
+
+- pipes transformam a exibicao do valor no template
+- a sintaxe usa `|`
+- eles ajudam a manter o componente mais limpo
+
+## 20. Diretivas estruturais: `*ngIf` e `*ngFor`
 
 As diretivas estruturais do Angular permitem modificar a estrutura do DOM, ou seja, adicionar, remover ou repetir elementos na tela.
 
@@ -1527,7 +1885,7 @@ Resumo mental:
 
 ---
 
-## 19.1 A diretiva `*ngIf`
+## 20.1 A diretiva `*ngIf`
 
 A diretiva `*ngIf` mostra ou remove um elemento do DOM com base em uma condição booleana.
 
@@ -1658,7 +2016,7 @@ Resumo:
 
 ---
 
-## 19.2 A diretiva `*ngFor`
+## 20.2 A diretiva `*ngFor`
 
 A diretiva `*ngFor` repete um elemento para cada item de uma lista.
 
@@ -1928,7 +2286,7 @@ Resumo:
 
 ---
 
-## 19.3 Combinando `*ngIf` e `*ngFor`
+## 20.3 Combinando `*ngIf` e `*ngFor`
 
 É comum precisar usar as duas diretivas juntas.
 
@@ -1984,7 +2342,7 @@ Resumo:
 
 ---
 
-## 19.4 Diferença entre `*ngIf` e `[style.display]` ou `[hidden]`
+## 20.4 Diferença entre `*ngIf` e `[style.display]` ou `[hidden]`
 
 É importante entender quando usar cada abordagem:
 
@@ -2021,7 +2379,7 @@ Resumo:
 
 ---
 
-## 19.5 `ng-container` e `ng-template`
+## 20.5 `ng-container` e `ng-template`
 
 Esses dois elementos são especiais no Angular.
 
@@ -2068,7 +2426,7 @@ Resumo:
 
 ---
 
-## 20. O que este projeto praticou
+## 21. O que este projeto praticou
 
 Com base no código e nos comentários, este projeto abordou:
 
@@ -2152,7 +2510,7 @@ Nesse exemplo aparecem:
 - vinculação de evento
 - organização entre classe e template
 
-## 21. Resumo rápido para revisão
+## 22. Resumo rápido para revisão
 
 Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 
@@ -2163,6 +2521,7 @@ Se eu precisasse revisar este projeto rapidamente, eu lembraria:
 - `()` escuta evento do template
 - `[(ngModel)]` cria vinculação em duas vias entre template e classe
 - `{{ }}` exibe valor no HTML
+- `{{ valor | pipe }}` transforma a exibicao do valor no template
 - `@Input()` recebe valor do componente pai
 - `@Output()` emite evento do filho para o pai
 - `declarations` registra componentes do módulo
@@ -2199,6 +2558,7 @@ export class RevisaoComponent {
 ```html
 <h1 [class.destaque]="destaque">{{ nome }}</h1>
 <p [style.color]="cor">Estado visual</p>
+<small>{{ nome | uppercase }}</small>
 <button
   [disabled]="bloqueado"
   [attr.aria-label]="descricao"
@@ -2215,9 +2575,10 @@ Revisão do que aparece aqui:
 - `[attr.aria-label]`: vinculação de atributo
 - `[style.color]`: vinculação de estilo CSS
 - `[class.destaque]`: vinculação de classe CSS
+- `| uppercase`: uso de pipe
 - `(click)`: vinculação de evento
 
-## 22. Próximos assuntos para continuar estudando
+## 23. Próximos assuntos para continuar estudando
 
 Depois do que foi visto aqui, a sequência mais natural de estudo seria:
 

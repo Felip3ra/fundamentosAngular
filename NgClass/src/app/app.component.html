@@ -1,0 +1,34 @@
+<main class="page">
+  <h1>{{ title }}</h1>
+  <p>Exemplo usando `ngClass` em Angular 17 sem standalone.</p>
+
+  <section
+    class="card"
+    [ngClass]="{
+      'card--highlight': isHighlighted,
+      'card--rounded': isRounded,
+      'card--success': currentStatus === 'success',
+      'card--warning': currentStatus === 'warning'
+    }"
+  >
+    Este bloco recebe classes CSS dinamicamente com base no estado do componente.
+  </section>
+
+  <p
+    class="status"
+    [ngClass]="{
+      'status--success': currentStatus === 'success',
+      'status--warning': currentStatus === 'warning'
+    }"
+  >
+    Status atual: {{ currentStatus }}
+  </p>
+
+  <div class="actions">
+    <button type="button" (click)="toggleHighlight()">Alternar destaque</button>
+    <button type="button" (click)="toggleRounded()">Alternar borda arredondada</button>
+    <button type="button" (click)="toggleStatus()">Alternar status</button>
+  </div>
+</main>
+
+<router-outlet></router-outlet>
