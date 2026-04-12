@@ -1,0 +1,29 @@
+.page {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+}
+
+.card {
+  margin: 24px 0;
+  padding: 20px;
+  border: 2px solid #2563eb;
+  border-radius: 12px;
+  color: #1f2937;
+  transition: all 0.2s ease;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+}

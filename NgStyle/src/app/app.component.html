@@ -1,0 +1,23 @@
+<main class="page">
+  <h1>{{ title }}</h1>
+  <p>Exemplo usando `ngStyle` em Angular 17 sem standalone.</p>
+
+  <section
+    class="card"
+    [ngStyle]="{
+      'background-color': backgroundColor,
+      'font-size.px': fontSize,
+      'font-weight': isHighlighted ? '700' : '400',
+      'border-color': isHighlighted ? '#2563eb' : '#cbd5e1'
+    }"
+  >
+    Este bloco muda de estilo dinamicamente com base no estado do componente.
+  </section>
+
+  <div class="actions">
+    <button type="button" (click)="toggleHighlight()">Alternar destaque</button>
+    <button type="button" (click)="increaseFont()">Aumentar fonte</button>
+  </div>
+</main>
+
+<router-outlet></router-outlet>
