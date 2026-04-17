@@ -1709,23 +1709,164 @@ Tambem e possivel passar parametros:
 {{ valor | nomeDoPipe:param1:param2 }}
 ```
 
-### Exemplo com `uppercase`
+### Exemplo do projeto `Pipes`
 
 ```ts
-export class PerfilComponent {
-  nome = 'felipe';
+export class AppComponent {
+  pessoa = {
+    name: 'Felipe',
+    status: 1,
+  };
+
+  pessoa2 = {
+    name: 'Sandro',
+    status: 2,
+  };
+
+  pessoa3 = {
+    name: 'Elidio',
+    status: 3,
+  };
 }
 ```
 
 ```html
-<p>{{ nome | uppercase }}</p>
+<h1>
+  {{ pessoa.name }}
+</h1>
+
+<h1 [class]="pessoa.status | statusClass">
+  {{ pessoa.name }}
+</h1>
+
+<h1 [class]="pessoa2.status | statusClass">
+  {{ pessoa2.name }}
+</h1>
+
+<h1 [class]="pessoa3.status | statusClass">
+  {{ pessoa3.name }}
+</h1>
 ```
 
-Resultado esperado:
+Nesse projeto, o pipe usado e customizado:
+
+- `statusClass`: recebe um numero de status e devolve o nome de uma classe CSS
+
+Resultado esperado na tela:
 
 ```html
-<p>FELIPE</p>
+<h1 class="active">Felipe</h1>
+<h1 class="partial">Sandro</h1>
+<h1 class="blocked">Elidio</h1>
 ```
+
+### O que esse projeto demonstra
+
+- `pessoa.status | statusClass` transforma o numero em uma string de classe CSS
+- o valor retornado pelo pipe e usado no binding `[class]`
+- os valores originais continuam existindo na classe sem serem alterados pelo pipe
+
+Isso e importante porque pipe nao muda a variavel em si.
+
+Ele muda apenas a forma como o valor aparece no HTML.
+
+### Pipe customizado do projeto
+
+No projeto `Pipes`, o pipe foi criado assim:
+
+```ts
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({ name: 'statusClass' })
+export class StatusClassPipe implements PipeTransform {
+  transform(status: number): string {
+    switch (status) {
+      case 1:
+        return 'active';
+      case 2:
+        return 'partial';
+      case 3:
+        return 'blocked';
+      default:
+        return '';
+    }
+  }
+}
+```
+
+Uso no template:
+
+```html
+<h1 [class]="pessoa.status | statusClass">
+  {{ pessoa.name }}
+</h1>
+```
+
+### Declaracao no modulo
+
+Como `StatusClassPipe` e um pipe criado por voce, ele precisa ficar em `declarations`.
+
+```ts
+@NgModule({
+  declarations: [
+    AppComponent,
+    StatusClassPipe
+  ]
+})
+export class AppModule {}
+```
+
+### Classes CSS usadas no exemplo
+
+O pipe devolve nomes de classes que sao definidos no SCSS do componente.
+
+```scss
+.active {
+  color: white;
+  background-color: green;
+}
+
+.partial {
+  color: white;
+  background-color: orange;
+}
+
+.blocked {
+  color: white;
+  background-color: red;
+}
+```
+
+### Exemplo com encadeamento de pipes
+
+Tambem e possivel usar mais de um pipe na mesma expressao.
+
+```ts
+export class UsuarioComponent {
+  nome = 'maria fernanda';
+}
+```
+
+```html
+<p>{{ nome | titlecase | slice:0:5 }}</p>
+```
+
+Nesse caso:
+
+- `titlecase` ajusta o texto
+- `slice` recorta parte do resultado anterior
+
+### Pipes comuns do Angular
+
+- `uppercase`: transforma texto em maiusculas
+- `lowercase`: transforma texto em minusculas
+- `titlecase`: coloca iniciais em maiusculas
+- `date`: formata datas
+- `currency`: formata valores monetarios
+- `percent`: formata porcentagens
+- `number`: formata numeros
+- `slice`: recorta texto ou arrays
+- `json`: ajuda a inspecionar objetos no template
 
 ### Exemplo com `date`
 
@@ -1750,32 +1891,6 @@ export class ProdutoComponent {
 ```html
 <p>{{ preco | currency:'BRL' }}</p>
 ```
-
-### Exemplo com encadeamento de pipes
-
-Tambem e possivel usar mais de um pipe na mesma expressao.
-
-```ts
-export class UsuarioComponent {
-  nome = 'maria fernanda';
-}
-```
-
-```html
-<p>{{ nome | titlecase | slice:0:5 }}</p>
-```
-
-### Pipes comuns do Angular
-
-- `uppercase`: transforma texto em maiusculas
-- `lowercase`: transforma texto em minusculas
-- `titlecase`: coloca iniciais em maiusculas
-- `date`: formata datas
-- `currency`: formata valores monetarios
-- `percent`: formata porcentagens
-- `number`: formata numeros
-- `slice`: recorta texto ou arrays
-- `json`: ajuda a inspecionar objetos no template
 
 ### Exemplo de pipe customizado
 
@@ -1814,6 +1929,8 @@ Resumo:
 
 - pipes transformam a exibicao do valor no template
 - a sintaxe usa `|`
+- no projeto `Pipes`, o exemplo principal usa o pipe customizado `statusClass`
+- pipes customizados tambem precisam ser declarados no modulo
 - eles ajudam a manter o componente mais limpo
 
 ## 20. Diretivas estruturais: `*ngIf` e `*ngFor`
